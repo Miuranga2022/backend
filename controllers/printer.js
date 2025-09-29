@@ -3,7 +3,7 @@ import escposNetwork from "escpos-network";
 
 escpos.Network = escposNetwork;
 
-const PRINTER_IP = "192.168.8.197"; // change if needed
+const PRINTER_IP = "192.168.8.198"; // change if needed
 const PRINTER_PORT = 9100;         // default port
 
 export function printBill(billData) {
