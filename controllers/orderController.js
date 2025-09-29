@@ -177,7 +177,7 @@ export const quickSell = async (req, res) => {
     const grandTotal = subTotal - discountAmount;
     const balance = grandTotal - paidAmount;
 
-    // --- Generate unique daily bill number using last bill ---
+    // --- Generate billNo ---
     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, "0");
@@ -187,7 +187,7 @@ export const quickSell = async (req, res) => {
     const todayEnd = new Date(`${yyyy}-${mm}-${dd}T23:59:59.999Z`);
 
     const lastBill = await Bill.findOne({
-      createdAt: { $gte: todayStart, $lte: todayEnd }
+      createdAt: { $gte: todayStart, $lte: todayEnd },
     }).sort({ createdAt: -1 });
 
     let sequenceNumber = "001";
@@ -233,12 +233,11 @@ export const quickSell = async (req, res) => {
       });
     }
 
-    // --- Save order items ---
     await OrderItem.insertMany(orderItemsData);
 
-    // --- Print bill via backend ---
+    // --- Send print request to local print server ---
     try {
-      await printBill({
+      await axios.post("http://192.168.8.198:4000/print", {
         billNo,
         items,
         subTotal,
@@ -246,14 +245,16 @@ export const quickSell = async (req, res) => {
         grandTotal,
         paidAmount,
         balance,
-      });
+      }, { timeout: 5000 }); // 5 seconds timeout
     } catch (printErr) {
-      console.error("⚠️ Print failed:", printErr.message);
+      console.error("⚠️ Local print server error:", printErr.message);
     }
 
-    res
-      .status(201)
-      .json({ message: "Quick sell saved & printed", bill, items: orderItemsData });
+    res.status(201).json({
+      message: "Quick sell saved & print request sent",
+      bill,
+      items: orderItemsData,
+    });
 
   } catch (error) {
     console.error("❌ QuickSell error:", error.message);
