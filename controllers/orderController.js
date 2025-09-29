@@ -237,19 +237,19 @@ export const quickSell = async (req, res) => {
     await OrderItem.insertMany(orderItemsData);
 
     // --- Print bill via backend ---
-    try {
-      await printBill({
-        billNo,
-        items,
-        subTotal,
-        discountAmount,
-        grandTotal,
-        paidAmount,
-        balance,
-      });
-    } catch (printErr) {
-      console.error("⚠️ Print failed:", printErr.message);
-    }
+    // try {
+    //   await printBill({
+    //     billNo,
+    //     items,
+    //     subTotal,
+    //     discountAmount,
+    //     grandTotal,
+    //     paidAmount,
+    //     balance,
+    //   });
+    // } catch (printErr) {
+    //   console.error("⚠️ Print failed:", printErr.message);
+    // }
 
     res
       .status(201)
