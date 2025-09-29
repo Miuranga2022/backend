@@ -237,7 +237,7 @@ export const quickSell = async (req, res) => {
 
     // --- Send print request to local print server ---
     try {
-      await axios.post("http://192.168.8.198:4000/print", {
+      await axios.post("http://192.168.8.194:4000/print", {
         billNo,
         items,
         subTotal,
